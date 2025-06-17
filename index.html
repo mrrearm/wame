@@ -361,11 +361,13 @@
             }
             
             // Generate WhatsApp link
-            let whatsappLink = `https://wa.me/${phoneNumber.substring(1)}`;
+            let whatsappLink = `https://api.whatsapp.com/send/?phone=${phoneNumber.substring(1)}&text`;
             
             if (message) {
-                whatsappLink += `?text=${encodeURIComponent(message)}`;
+                whatsappLink += `=${encodeURIComponent(message)}`;
             }
+            
+            whatsappLink += `&type=phone_number&app_absent=0&wame_ctl=1`;
             
             generatedWhatsAppLink = whatsappLink;
             linkDisplay.textContent = whatsappLink;
