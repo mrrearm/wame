@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Link Generator - Cybertech</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid #00ffff;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 
+                0 0 50px rgba(0, 255, 255, 0.3),
+                inset 0 0 20px rgba(0, 255, 255, 0.1);
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            animation: containerGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes containerGlow {
+            from { box-shadow: 0 0 50px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.1); }
+            to { box-shadow: 0 0 80px rgba(0, 255, 255, 0.5), inset 0 0 30px rgba(0, 255, 255, 0.2); }
+        }
+
+        .title {
+            text-align: center;
+            color: #00ffff;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: titlePulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes titlePulse {
+            from { text-shadow: 0 0 20px rgba(0, 255, 255, 0.8); }
+            to { text-shadow: 0 0 30px rgba(0, 255, 255, 1), 0 0 40px rgba(0, 255, 255, 0.6); }
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #ffffff;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .input-label {
+            display: block;
+            color: #00ffff;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #333;
+            border-radius: 10px;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .result-section {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            border-radius: 10px;
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-label {
+            color: #00ffff;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .result-link {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 1rem;
+            border-radius: 8px;
+            word-break: break-all;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            border: 1px solid #333;
+        }
+
+        .copy-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(45deg, #ff6b00, #ff8f00);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 0, 0.4);
+        }
+
+        .copy-success {
+            color: #00ff00;
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .copy-success.show {
+            opacity: 1;
+        }
+
+        /* Particle effect */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #00ffff;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 6s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            
+            .title {
+                font-size: 1.5rem;
+                letter-spacing: 2px;
+            }
+            
+            .subtitle {
+                font-size: 0.8rem;
+            }
+            
+            .input-field, .btn {
+                padding: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.2rem;
+                letter-spacing: 1px;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">WhatsApp Link Generator</h1>
+        <p class="subtitle">Genera link di condivisione WhatsApp in stile cybertech</p>
+        
+        <div class="input-group">
+            <label class="input-label" for="phoneNumber">Numero di Telefono</label>
+            <input type="tel" id="phoneNumber" class="input-field" placeholder="+39 123 456 7890" />
+        </div>
+        
+        <div class="input-group">
+            <label class="input-label" for="message">Messaggio (opzionale)</label>
+            <textarea id="message" class="input-field" rows="3" placeholder="Inserisci il tuo messaggio qui..."></textarea>
+        </div>
+        
+        <button class="btn" onclick="generateLink()">
+            <span>Genera Link</span>
+        </button>
+        
+        <div class="result-section" id="resultSection">
+            <div class="result-label">Link WhatsApp Generato:</div>
+            <div class="result-link" id="generatedLink"></div>
+            <button class="copy-btn" onclick="copyToClipboard()">
+                📋 Copia Link
+            </button>
+            <div class="copy-success" id="copySuccess">✅ Link copiato negli appunti!</div>
+        </div>
+    </div>
+
+    <script>
+        let generatedWhatsAppLink = '';
+
+        // Create floating particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDelay = Math.random() * 6 + 's';
+            particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 6000);
+        }
+
+        // Create particles periodically
+        setInterval(createParticle, 300);
+
+        function generateLink() {
+            const phoneInput = document.getElementById('phoneNumber');
+            const messageInput = document.getElementById('message');
+            const resultSection = document.getElementById('resultSection');
+            const linkDisplay = document.getElementById('generatedLink');
+            
+            let phoneNumber = phoneInput.value.trim();
+            const message = messageInput.value.trim();
+            
+            if (!phoneNumber) {
+                alert('Inserisci un numero di telefono');
+                phoneInput.focus();
+                return;
+            }
+            
+            // Clean phone number (remove spaces, dashes, parentheses)
+            phoneNumber = phoneNumber.replace(/[\s\-\(\)]/g, '');
+            
+            // Ensure it starts with + if not already
+            if (!phoneNumber.startsWith('+')) {
+                phoneNumber = '+' + phoneNumber;
+            }
+            
+            // Generate WhatsApp link
+            let whatsappLink = `https://wa.me/${phoneNumber.substring(1)}`;
+            
+            if (message) {
+                whatsappLink += `?text=${encodeURIComponent(message)}`;
+            }
+            
+            generatedWhatsAppLink = whatsappLink;
+            linkDisplay.textContent = whatsappLink;
+            resultSection.style.display = 'block';
+            
+            // Add visual feedback
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function copyToClipboard() {
+            if (!generatedWhatsAppLink) return;
+            
+            navigator.clipboard.writeText(generatedWhatsAppLink).then(() => {
+                const successMessage = document.getElementById('copySuccess');
+                successMessage.classList.add('show');
+                
+                setTimeout(() => {
+                    successMessage.classList.remove('show');
+                }, 2000);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = generatedWhatsAppLink;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const successMessage = document.getElementById('copySuccess');
+                successMessage.classList.add('show');
+                
+                setTimeout(() => {
+                    successMessage.classList.remove('show');
+                }, 2000);
+            });
+        }
+
+        // Allow Enter key to generate link
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && (e.target.id === 'phoneNumber' || e.target.id === 'message')) {
+                generateLink();
+            }
+        });
+
+        // Auto-format phone number input
+        document.getElementById('phoneNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0 && !value.startsWith('39')) {
+                if (value.length <= 10) {
+                    value = '39' + value;
+                }
+            }
+            
+            // Format with spaces for better readability
+            if (value.length > 2) {
+                value = '+' + value.substring(0, 2) + ' ' + value.substring(2);
+            }
+        });
+    </script>
+</body>
+</html>
